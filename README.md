@@ -1,11 +1,9 @@
-[TOC]
-
 # 简介
 **simpleLog4sh**是一个极为简单的shell日志框架，甚至不应该叫日志框架。  
 
 但通过简单的封装，这个小shell可以提供诸如：  
 1. logInfo，logDebug等多级别日志输出  
-2. 日志记录带有时间戳和日志级别
+2. 日志记录带有时间戳和日志级别  
 3. 将日志输出到指定文件  
 4. 日志文件按日期进行归档   
 5. 抛出异常  
@@ -61,15 +59,13 @@ logDebug "hello, world" # 推荐将所有的内容用双引号包围
 ```
 
 ## 设置日志级别
-simpleLog4sh支持6个日志级别：  
+simpleLog4sh支持6个日志级别，含义与Apache日志框架类似：  
 1. ALL  
 2. DEBUG  
 3. INFO  
 4. WARN  
 5. ERROR  
 6. OFF
-
-含义与Apache日志框架类似。  
 
 如果要设置指定的日志级别，请在导入simpleLogsh之后，export变量`LOG_LEVEL`，可设置为如下预置常量：
 
@@ -91,7 +87,7 @@ throw "ParamsNumberException: need 2 params"
 使用throw语句，程序将在stderr输出上述语句，同时在日志文件以LOG_LEVEL_ERROR级别记录。最后程序会意退出码1退出。
 
 ## myEcho与myEchoError语句
-`myEcho`和`myEchoError`与shell的`echo`语句类似，但有两点不同：  
+`myEcho`和`myEchoError`与shell的`echo`语句类似，但有两点增强：  
 1. `myEcho`和`myEchoError`不仅会输出到控制台，还会输出到日志文件。  
 2. `myEchoError`的输出是stdErr
 
