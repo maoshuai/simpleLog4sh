@@ -2,97 +2,202 @@
 # shell日志工具，提供类似log4j的日志级别功能
 # 
 # author: maoshuai
-# version: 1.0.0.2016-04-21 实现基本功能，提供simpleLog4sh.cfg配置文件
 #---------------
 
 # 避免被多次导入
-if [ "$_simpleLog4sh_sourced" ]; then
+if [ "${_simpleLog4sh_sourced}" ]; then
         return
 fi
 export _simpleLog4sh_sourced=1
-
-# 设置默认配置
-# 日志文件存储的根目录
-simpleLog4sh_LOG_DIR="/tmp/simpleLog4sh"
-# 日志级别
-simpleLog4sh_LOG_LEVEL="ALL"
-# 日志文件前缀
-simpleLog4sh_LOG_FILE_NAME_PREFIX="simpleLog4sh"
-# 日志文件后缀
-simpleLog4sh_LOG_FILE_NAME_SUFFIX=".log"
-
-# 运行用户自定义配置，配置文件需与shell同目录，并且名称为simpleLog4sh.cfg
-if [ -f simpleLog4sh.cfg ];then
-	. simpleLog4sh.cfg
-fi
+	
+simpleLog4sh_main(){
 
 
-# 到此为止配置已经结束
+	# 设置默认配置
+	# 日志文件存储的根目录
+	simpleLog4sh_LOG_DIR="/tmp/simpleLog4sh"
+	# 日志级别
+	simpleLog4sh_LOG_LEVEL="ALL"
+	# 日志文件前缀
+	simpleLog4sh_LOG_FILE_NAME_PREFIX="simpleLog4sh"
+	# 日志文件后缀
+	simpleLog4sh_LOG_FILE_NAME_SUFFIX=".log"
+	# 标准输出重定向，为空表示不重定向
+	simpleLog4sh_LOG_STDOUT_SUFFIX=""
+	# 标准错误输出重定向，为空表示不重定向
+	simpleLog4sh_LOG_STDERR_SUFFIX=""
+	# 是否显示完成的函数调用路径（默认为false）
+	simpleLog4sh_LOG_FULL_CALLPATH="false"
+
+	cfgFile=$1
 
 
-# 日志级别常量，大于这个常量的才会打印
-simpleLog4sh_LOG_LEVEL_NUM_ALL=-9000
-simpleLog4sh_LOG_LEVEL_NUM_DEBUG=100
-simpleLog4sh_LOG_LEVEL_NUM_INFO=200
-simpleLog4sh_LOG_LEVEL_NUM_WARN=300
-simpleLog4sh_LOG_LEVEL_NUM_ERROR=400
-simpleLog4sh_LOG_LEVEL_NUM_OFF=9000
-
-# 配置校验开始
-# 日志目录的校验，目录存在必须保证可写
-if [ -d $simpleLog4sh_LOG_DIR ];then
-	if [ ! -w $simpleLog4sh_LOG_DIR ];then
-		echo "simpleLog4sh_LOG_DIR is not writeable directory: $simpleLog4sh_LOG_DIR" >&2
-		exit 1
+	# 运行用户自定义配置，配置文件需与shell同目录，并且名称为simpleLog4sh.cfg
+	if [ x"$cfgFile" != "x" ];then
+		if [ -f $cfgFile ];then
+			. $cfgFile
+		fi
 	fi
-fi
-
-# 日志级别的转换
-# 配置文件中的日志级别字符串，转换为数字
-if [ x$simpleLog4sh_LOG_LEVEL = x"ALL" ];then
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_ALL
-elif [ x$simpleLog4sh_LOG_LEVEL = x"DEBUG" ];then
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_DEBUG
-elif [ x$simpleLog4sh_LOG_LEVEL = x"INFO" ];then
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_INFO
-elif [ x$simpleLog4sh_LOG_LEVEL = x"WARN" ];then
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_WARN
-elif [ x$simpleLog4sh_LOG_LEVEL = x"ERROR" ];then
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_ERROR
-elif [ x$simpleLog4sh_LOG_LEVEL = x"OFF" ];then
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_OFF
-else # 默认打印所有日志
-	simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_ALL
-fi
 
 
-
-# 默认的log名
-loggerName=$0
+	# 到此为止配置已经结束
 
 
+	# 日志级别常量，大于这个常量的才会打印
+	simpleLog4sh_LOG_LEVEL_NUM_ALL=-9000
+	simpleLog4sh_LOG_LEVEL_NUM_TRACE=50
+	simpleLog4sh_LOG_LEVEL_NUM_DEBUG=100
+	simpleLog4sh_LOG_LEVEL_NUM_INFO=200
+	simpleLog4sh_LOG_LEVEL_NUM_WARN=300
+	simpleLog4sh_LOG_LEVEL_NUM_ERROR=400
+	simpleLog4sh_LOG_LEVEL_NUM_OFF=9000
+
+	# 配置校验开始
+	# 日志目录的校验，目录存在必须保证可写
+	if [ -d $simpleLog4sh_LOG_DIR ];then
+		if [ ! -w $simpleLog4sh_LOG_DIR ];then
+			echo "simpleLog4sh_LOG_DIR is not writeable directory: $simpleLog4sh_LOG_DIR" >&2
+			exit 1
+		fi
+	fi
+
+	# 日志级别的转换
+	# 配置文件中的日志级别字符串，转换为数字
+	if [ x$simpleLog4sh_LOG_LEVEL = x"ALL" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_ALL
+	elif [ x$simpleLog4sh_LOG_LEVEL = x"TRACE" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_TRACE
+	elif [ x$simpleLog4sh_LOG_LEVEL = x"DEBUG" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_DEBUG
+	elif [ x$simpleLog4sh_LOG_LEVEL = x"INFO" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_INFO
+	elif [ x$simpleLog4sh_LOG_LEVEL = x"WARN" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_WARN
+	elif [ x$simpleLog4sh_LOG_LEVEL = x"ERROR" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_ERROR
+	elif [ x$simpleLog4sh_LOG_LEVEL = x"OFF" ];then
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_OFF
+	else # 默认打印所有日志
+		simpleLog4sh_LOG_LEVEL_NUM=$simpleLog4sh_LOG_LEVEL_NUM_ALL
+	fi
+
+
+
+	# 默认的log名
+	defaultLoggerName="root"
+
+	setStd
+
+}
+
+setStd(){
+	# 设置重定向
+	if [ x"$simpleLog4sh_LOG_STDOUT_SUFFIX" != "x" ];then
+		exec >>$(_getCurrentStdOutFile)
+	fi
+	# 设置重定向
+	if [ x"$simpleLog4sh_LOG_STDERR_SUFFIX" != "x" ];then
+		exec 2>>$(_getCurrentStdErrFile)
+	fi
+}
+
+
+# 刷新logger名
+refreshLogger(){
+	export LOGGER_NAME="$1"
+	setStd
+}
 
 
 # 获取当前日志文件的地址
 # 每天滚动一个日志文件
 _getCurrentLogFile()
 {
-	if [ ! -e $simpleLog4sh_LOG_DIR ];then
-		mkdir -p $simpleLog4sh_LOG_DIR
-	fi 
 	local logDate=$(date +"%Y%m%d")
-	local todayLogFile=$simpleLog4sh_LOG_DIR/${simpleLog4sh_LOG_FILE_NAME_PREFIX}_${logDate}${simpleLog4sh_LOG_FILE_NAME_SUFFIX}
+	if [ ! -e $simpleLog4sh_LOG_DIR/$logDate ];then
+		mkdir -p $simpleLog4sh_LOG_DIR/$logDate
+	fi 
+	
+	local todayLogFile=$simpleLog4sh_LOG_DIR/$logDate/${simpleLog4sh_LOG_FILE_NAME_PREFIX}_$(_getLoggerName)${simpleLog4sh_LOG_FILE_NAME_SUFFIX}
 	if [ ! -e $todayLogFile ];then
 		touch $todayLogFile
 	fi 
 	echo $todayLogFile
 }
 
+_getLoggerName(){
+	loggerName=$
+	if [ "x$LOGGER_NAME" = "x" ];then
+		echo "$defaultLoggerName"
+	else
+		echo "$LOGGER_NAME"
+	fi
+}
 
 
 
+# 获取当前stdErr文件的地址
+# 每天滚动一个日志文件
+_getCurrentStdOutFile()
+{
+	local logDate=$(date +"%Y%m%d")
+	if [ ! -e $simpleLog4sh_LOG_DIR/$logDate ];then
+		mkdir -p $simpleLog4sh_LOG_DIR/$logDate
+	fi 
+	
+	local todayLogFile=$simpleLog4sh_LOG_DIR/$logDate/${simpleLog4sh_LOG_FILE_NAME_PREFIX}_$(_getLoggerName)${simpleLog4sh_LOG_STDOUT_SUFFIX}
+	if [ ! -e $todayLogFile ];then
+		touch $todayLogFile
+	fi 
+	echo $todayLogFile
+}
 
+# 获取当前stdErr文件的地址
+# 每天滚动一个日志文件
+_getCurrentStdErrFile()
+{
+	local logDate=$(date +"%Y%m%d")
+	if [ ! -e $simpleLog4sh_LOG_DIR/$logDate ];then
+		mkdir -p $simpleLog4sh_LOG_DIR/$logDate
+	fi 
+	
+	local todayLogFile=$simpleLog4sh_LOG_DIR/$logDate/${simpleLog4sh_LOG_FILE_NAME_PREFIX}_$(_getLoggerName)${simpleLog4sh_LOG_STDERR_SUFFIX}
+	if [ ! -e $todayLogFile ];then
+		touch $todayLogFile
+	fi 
+	echo $todayLogFile
+}
 
+# get call function
+_getCallPath(){
+	if [ "x$simpleLog4sh_LOG_FULL_CALLPATH" == "xtrue" ];then
+		local len=${#FUNCNAME[@]}
+		let "len=len-2"
+		local callPath=""
+		while [ $len -ge 3 ];do
+			if [ "x$callPath" == "x" ];then
+				callPath="${FUNCNAME[$len]}"
+			else
+				callPath="$callPath.${FUNCNAME[$len]}"
+			fi
+			let "len=len-1"
+		done
+		echo "$callPath"
+	else
+		echo "${FUNCNAME[3]}"
+	fi
+
+}
+
+_doLog(){
+	local levelName="$1"
+	local levelNum="$2"
+	shift 2
+	if [ $simpleLog4sh_LOG_LEVEL_NUM -le $levelNum ];then
+		timestamp="$(date +%Y-%m-%d\ %H:%M:%S.%N | cut -c 1-23)"
+		echo "$timestamp [$(_getCallPath)] ($levelName)  $@" >> `_getCurrentLogFile`
+	fi
+}
 
 
 ####################### 以下是暴露给用户的方法
@@ -101,71 +206,50 @@ _getCurrentLogFile()
 throw()
 {
 	if [ $# -ne 0 ];then
-		myEchoError "$*" # 首先打印在stdError
-		logError "$*" # 记录到error
+		logEchoError "$@" # 首先打印在stdError
+		logError "$@" # 记录到error
 	fi  
   	exit 1
 }
 
 # 代替echo，输出到标准输出
-myEcho()
+logEcho()
 {
-	echo "$*"
-	if [ $simpleLog4sh_LOG_LEVEL_NUM -lt $simpleLog4sh_LOG_LEVEL_NUM_OFF ];then
-		echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (ECHO) '"$*" >> `_getCurrentLogFile`
-	fi
+	echo "$@"
+	_doLog "ECHO " $simpleLog4sh_LOG_LEVEL_NUM_OFF "$@"
 
 }
 
 # 代替echo，输出到标准错误输出
-myEchoError()
+logEchoError()
 {
-	echo "(ERROR)" "$*" >&2
-	if [ $simpleLog4sh_LOG_LEVEL_NUM -lt $simpleLog4sh_LOG_LEVEL_NUM_OFF ];then
-		echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (ECHO_ERROR) '"$*" >>  `_getCurrentLogFile`
-	fi
+	echo "(ERROR)" "$@" >&2
+	_doLog "ECHO_ERROR" $simpleLog4sh_LOG_LEVEL_NUM_OFF "$@"
 }
 
-
+logTrace()
+{	
+	_doLog "TRACE" $simpleLog4sh_LOG_LEVEL_NUM_TRACE "$@"
+}
 
 logDebug()
 {	
-	if [ $simpleLog4sh_LOG_LEVEL_NUM -le $simpleLog4sh_LOG_LEVEL_NUM_DEBUG ];then
-		echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (DEBUG) '$* >>  `_getCurrentLogFile`
-	fi
+	_doLog "DEBUG" $simpleLog4sh_LOG_LEVEL_NUM_DEBUG "$@"
 }
-
-
 
 logInfo()
 {
-	
-	if [ $simpleLog4sh_LOG_LEVEL_NUM -le $simpleLog4sh_LOG_LEVEL_NUM_INFO ];then
-		echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (INFO) '$* >>  `_getCurrentLogFile`
-	fi
+	_doLog "INFO " $simpleLog4sh_LOG_LEVEL_NUM_INFO "$@"
 }
 
 logWarn()
 {
-
-	if [ $simpleLog4sh_LOG_LEVEL_NUM -le $simpleLog4sh_LOG_LEVEL_NUM_WARN ];then
-		echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (WARN) '$* >>  `_getCurrentLogFile`
-	fi
+	_doLog "WARN" $simpleLog4sh_LOG_LEVEL_NUM_WARN "$@"
 }
-
 
 logError()
 {
-	
-	if [ $simpleLog4sh_LOG_LEVEL_NUM -le $simpleLog4sh_LOG_LEVEL_NUM_ERROR ];then
-		echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (ERROR) '$* >>  `_getCurrentLogFile`
-	fi
-}
-
-# TODO
-logWithLine()
-{
-	echo `date +%Y-%m-%d\ %H:%M:%S` [$loggerName]' (ERROR) '$* >>  `_getCurrentLogFile`
+	_doLog "ERROR" $simpleLog4sh_LOG_LEVEL_NUM_ERROR "$@"
 }
 
 
@@ -173,3 +257,6 @@ logWithLine()
 #
 ##############################
 
+
+
+simpleLog4sh_main "$@"

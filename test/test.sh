@@ -1,7 +1,10 @@
-. simpleLog4sh.source
+#!/bin/bash
+. ../src/simpleLog4sh.source ../src/simpleLog4sh.cfg
 
-myEcho "helll"
-myEchoError "myEchoError"
+
+logEcho "hello"
+logEchoError "myEchoError"
+logTrace "logTrace"
 logInfo "logInfo"
 logDebug "logDebug"
 logError "logError"
