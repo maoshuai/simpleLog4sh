@@ -2,10 +2,11 @@
 . ../src/simpleLog4sh.source ../src/simpleLog4sh.cfg
 
 
-logEcho "hello"
-logEchoError "myEchoError"
+logEcho "logEcho"
+logEchoError "logEchoError"
 logTrace "logTrace"
 logInfo "logInfo"
 logDebug "logDebug"
 logError "logError"
 logWarn "logWarn"
+throw "Exception"
