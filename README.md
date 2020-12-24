@@ -2,14 +2,16 @@
 **simpleLog4sh**是一个极为简单的shell日志框架，甚至不应该叫日志框架。  
 与其他shell日志框架不同，它仅仅是一个： 
  
-**只有几十行的纯shell脚本，没有任何依赖**。
+**只有几百行的纯shell脚本，没有任何依赖**。
 
 但通过简单的封装，这个小shell可以提供诸如：  
 1. logInfo，logDebug等多级别日志输出  
-2. 日志记录带有时间戳和日志级别  
+2. 日志记录带有时间戳和日志级别，并可控制输出日志的级别  
 3. 将日志输出到指定文件  
 4. 日志文件按日期进行归档   
 5. 抛出异常  
+6. 自动清理日志
+7. 接管stdout/stederr
 
 **simpleLog4sh**不期望做到像Apache日志框架一样复杂，仅仅在您写toy小程序的时候，能帮助你实现最简单的日志功能，而不必总是echo。
 
@@ -33,6 +35,11 @@ logDebug "hello, world" # 推荐将所有的内容用双引号包围
 
 ```
 . ../src/simplelog4sh.sh
+```
+
+如果需要覆盖默认配置，可提供配置文件
+```
+. ../src/simpleLog4sh.source ../src/simpleLog4sh.cfg
 ```
 
 ## logXXX语句
