@@ -88,9 +88,17 @@ simpleLog4sh_main(){
 	# suffix name of stdout log
 	# keep it empty if you don't want to redirect stdout
 	simpleLog4sh_LOG_STDOUT_SUFFIX=""
+	# keep stdout on console when redirect stdout (defult: true)
+	# e.g. stdout will appear both on console and log file.
+	# set false if don't keep on console
+	simpleLog4sh_LOG_STDOUT_KEEP_CONSOLE="true"
 	# suffix name of stderr log
 	# keep it empty if you don't want to redirect stderr
 	simpleLog4sh_LOG_STDERR_SUFFIX=""
+	# keep stderr on console when redirect stderr (defult: true)
+	# e.g. stderr will appear both on console and log file.
+	# set false if don't keep on console
+	simpleLog4sh_LOG_STDERR_KEEP_CONSOLE="true"
 	# show full call path of functions
 	simpleLog4sh_LOG_FULL_CALLPATH="false"
 
