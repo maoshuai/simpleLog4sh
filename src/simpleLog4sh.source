@@ -156,10 +156,18 @@ simpleLog4sh_main(){
 # redirect stdout and stderr
 setStd(){
 	if [ x"$simpleLog4sh_LOG_STDOUT_SUFFIX" != "x" ];then
-		exec >>$(_getCurrentStdOutFile)
+		if [ x"$simpleLog4sh_LOG_STDOUT_KEEP_CONSOLE" != x"false" ];then
+			exec > >(tee -a $(_getCurrentStdOutFile))
+		else
+			exec >>$(_getCurrentStdOutFile)
+		fi
 	fi
 	if [ x"$simpleLog4sh_LOG_STDERR_SUFFIX" != "x" ];then
-		exec 2>>$(_getCurrentStdErrFile)
+		if [ x"$simpleLog4sh_LOG_STDERR_KEEP_CONSOLE" != x"false" ];then
+			exec 2> >(tee -a $(_getCurrentStdErrFile))
+		else
+			exec 2>>$(_getCurrentStdErrFile)
+		fi
 	fi
 }
 
