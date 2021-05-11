@@ -1,3 +1,7 @@
+# SimpleLog4sh
+日志文件截图：
+
+![](doc/img/header.png)
 # 简介
 **simpleLog4sh**是一个极为简单的shell日志框架，甚至不应该叫日志框架。  它足够简单，却十分实用：**区区几百行的纯shell脚本，没有任何依赖**。
 
