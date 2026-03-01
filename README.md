@@ -1,3 +1,5 @@
+English | [中文版本](README_zh.md)
+
 # SimpleLog4sh
 
 ![Log file screenshot](doc/img/header.png)
@@ -29,8 +31,6 @@ Example output:
 2015-08-26 20:12:21 [test.sh] (INFO) hello, world
 2015-08-26 20:12:21 [test.sh] (DEBUG) hello, world
 ```
-
-[中文版本](README_zh.md)
 
 # Usage Examples
 
