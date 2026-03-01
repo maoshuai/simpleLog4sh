@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleLog4sh - Simple Logging Framework for Shell</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .language-switch { margin-bottom: 20px; }
+        .language-btn { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .language-btn.active { background-color: #0366d6; color: white; }
+    </style>
+</head>
+<body>
+    <div class="language-switch">
+        <button class="language-btn active" onclick="switchLanguage('zh')">中文</button>
+        <button class="language-btn" onclick="switchLanguage('en')">English</button>
+    </div>
+    <div id="content">
+        <!-- Content will be loaded dynamically -->
+    </div>
+
+    <script>
+        function switchLanguage(lang) {
+            const buttons = document.querySelectorAll('.language-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (lang === 'zh') {
+                buttons[0].classList.add('active');
+                fetch('README.md')
+                    .then(response => response.text())
+                    .then(content => document.getElementById('content').innerHTML = marked.parse(content));
+            } else {
+                buttons[1].classList.add('active');
+                fetch('README_en.md')
+                    .then(response => response.text())
+                    .then(content => document.getElementById('content').innerHTML = marked.parse(content));
+            }
+        }
+
+        // Load Chinese README by default
+        fetch('README.md')
+            .then(response => response.text())
+            .then(content => {
+                // Simple markdown to HTML conversion for basic formatting
+                const html = content
+                    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/`(.*?)`/g, '<code>$1</code>')
+                    .replace(/^```([\s\S]*?)^```/gm, '<pre><code>$1</code></pre>')
+                    .replace(/\n/g, '<br>');
+                document.getElementById('content').innerHTML = html;
+            });
+    </script>
+</body>
+</html>
