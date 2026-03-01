@@ -1,63 +1,70 @@
 # SimpleLog4sh
-日志文件截图：
 
-![](doc/img/header.png)
-# 简介
-**simpleLog4sh**是一个极为简单的shell日志框架，甚至不应该叫日志框架。  它足够简单，却十分实用：**区区几百行的纯shell脚本，没有任何依赖**。
+![Log file screenshot](doc/img/header.png)
 
-**simpleLog4sh**不期望做到像Apache日志框架一样复杂，但可以显著提升你的shell脚本日志体验，让你从繁琐的echo中解脱。
+# Introduction
 
-通过简单的封装，这个小shell可以完成如下功能：  
-1. logInfo，logDebug, logWarn, logError等多级别日志输出，并可控制输出日志的级别  
-2. 日志文件按日期进行归档，并自动清理   
-3. 日志记录带有时间戳、日志级别、函数调用链  
-4. 接管stdout/stederr，第三方命令的输出可复制或重定向到日志文件  
-5. throw语法抛出异常  
+**simpleLog4sh** is an extremely simple shell logging framework — so simple that it shouldn't even be called a logging framework. It's lightweight yet practical: **just a few hundred lines of pure shell script with zero dependencies**.
 
+**simpleLog4sh** doesn't aim to be as complex as Apache logging frameworks, but it can significantly enhance your shell script logging experience and free you from tedious echo statements.
 
-上手简单，符合习惯：
+Through simple encapsulation, this small shell script can accomplish the following features:
 
+1. Multi-level logging output (`logInfo`, `logDebug`, `logWarn`, `logError`) with configurable log level filtering
+2. Automatic log file rotation by date with automatic cleanup
+3. Log entries include timestamps, log levels, and function call chains
+4. Capture stdout/stderr — third-party command output can be duplicated or redirected to log files
+5. `throw` statement for exception-like error handling
+
+Easy to get started and follows familiar patterns:
+
+```bash
+logInfo "hello, world"
+logDebug "hello, world"  # Recommended to wrap all content in double quotes
 ```
-logInfo hello, world
-logDebug "hello, world" # 推荐将所有的内容用双引号包围
-```
 
-输出内容举例如下：
+Example output:
 
 ```
 2015-08-26 20:12:21 [test.sh] (INFO) hello, world
 2015-08-26 20:12:21 [test.sh] (DEBUG) hello, world
 ```
 
+[中文版本](README_zh.md)
 
-# 使用方法举例
-## 导入simpleLog4sh
-在您的shell开头导入即可，可以参考`/example/quickstart`的中的用法：
+# Usage Examples
 
-```
-. ../src/simplelog4sh.sh
+## Importing simpleLog4sh
+
+Import at the beginning of your shell script. Refer to the usage in `/examples/quickstart`:
+
+```bash
+. ../src/simpleLog4sh.source
 ```
 
-如果需要覆盖默认配置，可提供配置文件（参考源码中提供的cfg文件）
-```
+If you need to override default configuration, provide a config file (refer to the cfg file provided in source code):
+
+```bash
 . ../src/simpleLog4sh.source ../src/simpleLog4sh.cfg
 ```
 
-## `logXXX`语句
-simpleLog4sh提供了四个日志级别的方法，他们分别是  
-1. `logDebug`  
-2. `logInfo`  
-3. `logWarn`   
+## `logXXX` Statements
+
+simpleLog4sh provides four log level methods:
+
+1. `logDebug`
+2. `logInfo` 
+3. `logWarn`
 4. `logError`
 
-用法很简单，所有的参数都会被当做日志内容记录，比如：
+Usage is straightforward — all parameters are treated as log content:
 
-```
-logInfo hello, world
-logDebug "hello, world" # 推荐将所有的内容用双引号包围
+```bash
+logInfo "hello, world"
+logDebug "hello, world"  # Recommended to wrap all content in double quotes
 ```
 
-输出内容举例如下（默认输出到`/tmp/simpleLog4sh`目录）：
+Example output (default output to `/tmp/simpleLog4sh` directory):
 
 ```
 2015-08-26 20:03:18 [test.sh] (INFO) hello, this logInfo
@@ -70,44 +77,52 @@ logDebug "hello, world" # 推荐将所有的内容用双引号包围
 2015-08-26 20:13:26 [test.sh] (DEBUG) hello, logDebug
 ```
 
-## 设置日志级别
-simpleLog4sh支持6个日志级别，含义与Apache日志框架类似：  
-1. `ALL`  
-2. `DEBUG`  
-3. `INFO`  
-4. `WARN`  
-5. `ERROR`  
+## Setting Log Levels
+
+simpleLog4sh supports 6 log levels, similar to Apache logging framework:
+
+1. `ALL`
+2. `DEBUG`
+3. `INFO`
+4. `WARN`
+5. `ERROR`
 6. `OFF`
 
-如果要设置指定的日志级别，请在导入simpleLogsh之后加载配置文件，并在配置文件内设置`simpleLog4sh_LOG_LEVEL`变量，取值如下：
+To set a specific log level, load a configuration file after importing simpleLog4sh, and set the `simpleLog4sh_LOG_LEVEL` variable in the config file with one of the following values:
 
 ```
-ALL  
-DEBUG  
-INFO  
-WARN  
-ERROR  
-OFF  
+ALL
+DEBUG
+INFO
+WARN
+ERROR
+OFF
 ```
 
-## `throw`语句
-`throw`语句类似java语言中抛异常。通过使用`throw`语句，达到类似抛异常的效果。比如：
+## `throw` Statement
 
-```
+The `throw` statement works similarly to Java's exception throwing. Using `throw` achieves exception-like behavior:
+
+```bash
 throw "ParamsNumberException: need 2 params"
 ```
-使用throw语句，程序将在stderr输出上述语句，同时在日志文件以LOG_LEVEL_ERROR级别记录。最后程序会意退出码1退出。
 
-## `logEcho`与`logEchoError`语句
-`logEcho`和`logEchoError`与shell的`echo`语句类似，但有两点增强：  
-1. `logEcho`和`logEchoError`不仅会输出到控制台，还会输出到日志文件。  
-2. `logEchoError`的输出是stdErr
+When using `throw`, the program outputs the statement to stderr, logs it as `LOG_LEVEL_ERROR` in the log file, and exits with exit code 1.
 
-## 日志路径与日志文件滚动
-默认程序的输出日志路径是`/tmp/simplelog4sh`，并在此目录下面生成已当前日期命名的日志文件，类似如下：
+## `logEcho` and `logEchoError` Statements
+
+`logEcho` and `logEchoError` are similar to shell's `echo` statement but with two enhancements:
+
+1. Both output to console AND log file
+2. `logEchoError` outputs to stderr
+
+## Log Path and Log File Rotation
+
+By default, log output path is `/tmp/simpleLog4sh`, and log files are created with current date naming, similar to:
 
 ```
 -rw-r--r--  1 maoshuai  wheel  1839  8 25 23:48 log_20150825.log
 -rw-r--r--  1 maoshuai  wheel  1839  8 26 20:32 log_20150826.log
 ```
-当然，你可以通过加载配置文件，修改`simpleLog4sh_LOG_DIR`变量的值，实现自定义日志目录。
+
+You can customize the log directory by loading a configuration file and modifying the `simpleLog4sh_LOG_DIR` variable.
