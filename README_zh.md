@@ -34,10 +34,10 @@ logDebug "hello, world" # 推荐将所有的内容用双引号包围
 
 # 使用方法举例
 ## 导入simpleLog4sh
-在您的shell开头导入即可，可以参考`/example/quickstart`的中的用法：
+在您的shell开头导入即可，可以参考`/examples/quickstart`的中的用法：
 
 ```
-. ../src/simplelog4sh.sh
+. ../src/simpleLog4sh.source
 ```
 
 如果需要覆盖默认配置，可提供配置文件（参考源码中提供的cfg文件）
