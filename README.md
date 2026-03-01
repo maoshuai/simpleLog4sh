@@ -1,4 +1,7 @@
 # SimpleLog4sh
+
+[English Version](README_en.md) | [中文版本](README.md)
+
 日志文件截图：
 
 ![](doc/img/header.png)
