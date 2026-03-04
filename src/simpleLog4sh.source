@@ -112,8 +112,8 @@ simpleLog4sh_main(){
 	# loading configuration is complete now
 
 	# ensure the output directory is writable
-	if [ -d $simpleLog4sh_LOG_DIR ];then
-		if [ ! -w $simpleLog4sh_LOG_DIR ];then
+	if [ -d "$simpleLog4sh_LOG_DIR" ]; then
+		if [ ! -w "$simpleLog4sh_LOG_DIR" ]; then
 			echo "simpleLog4sh_LOG_DIR is not writeable directory: $simpleLog4sh_LOG_DIR" >&2
 			exit 1
 		fi
@@ -187,19 +187,18 @@ setStd(){
 _getCurrentLogFile()
 {
 	local logDate=$(date +"%Y%m%d")
-	if [ ! -e $simpleLog4sh_LOG_DIR/$logDate ];then
-		mkdir -p $simpleLog4sh_LOG_DIR/$logDate
+	if [ ! -e "$simpleLog4sh_LOG_DIR/$logDate" ];then
+		mkdir -p "$simpleLog4sh_LOG_DIR/$logDate"
 	fi 
 	
-	local todayLogFile=$simpleLog4sh_LOG_DIR/$logDate/${simpleLog4sh_LOG_FILE_NAME_PREFIX}_$(_getLoggerName)${simpleLog4sh_LOG_FILE_NAME_SUFFIX}
-	if [ ! -e $todayLogFile ];then
-		touch $todayLogFile
+	local todayLogFile="$simpleLog4sh_LOG_DIR/$logDate/${simpleLog4sh_LOG_FILE_NAME_PREFIX}_$(_getLoggerName)${simpleLog4sh_LOG_FILE_NAME_SUFFIX}"
+	if [ ! -e "$todayLogFile" ];then
+		touch "$todayLogFile"
 	fi 
-	echo $todayLogFile
+	echo "$todayLogFile"
 }
 
 _getLoggerName(){
-	loggerName=$
 	if [ "x$LOGGER_NAME" = "x" ];then
 		echo "$defaultLoggerName"
 	else
